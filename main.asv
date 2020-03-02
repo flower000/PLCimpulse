@@ -41,14 +41,13 @@ PowerRatio = 2;
 global isSuppre isSegme;
 isSuppre = false;   isSegme = false;
 global suplabel CorrLabel;
-suplabel = 1;   CorrLabel = 2;
+suplabel = 3;   CorrLabel = 2;
 global segnum;
 segnum = 4;
-global T Tmin k delta stepA stepT itertime;
-T = 100;  Tmin = 1e-9;  
-k = 100;  delta = 0.99;
+global T Tmin k delta stepA stepT;
+T = 100;  Tmin = 1e-8;  
+k = 100;  delta = 0.98;
 stepA = 0.1;    stepT = 0.05;
-itertime = 3;
 global coefficient;
 coefficient = 1/9;
 
@@ -57,8 +56,7 @@ coefficient = 1/9;
 %                               test
 %--------------------------------------------------------------------------
 % about test1
-global iteration;
-iteration = 5;
+global itera
 
 %% the Transmitter
 [Trans] = TransSig();
@@ -69,7 +67,7 @@ recie = ThrouChan(Trans');
 
 % the test
 %% the test_1: given SNR; different SIR from 0dB to 20dB with step of 5dB;
-%test1(Trans');
+test1(recie);
 
 
 

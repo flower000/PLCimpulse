@@ -91,10 +91,9 @@ function [preamble] = pream_gener_noWIN()
     TEMP = repmat(pre1,[1,4]).';  save 'TEMP.mat' 'TEMP';
     looup_table = zeros(4*N/k1,N/k1);   looup_table(:,1) = fft(TEMP,4*N/k1);
     for index = 2:N/k1
-         col = fft([TEMP(index:end);TEMP(1:index-1)],4*N/k1);
-         looup_table(:,index) = col;
+         looup_table(:,index) = fft([TEMP(index:end);TEMP(1:index-1)],4*N/k1);
     end
-    %save '.\4.Receiver\looup_table.mat' 'looup_table';
+    save '.\looup_table.mat' 'looup_table';
 %% adding cyclical extension to each preamble section
     sec1 = [repmat(pre1,1,N1)];
     sec2 = [repmat(pre2,1,N2)];

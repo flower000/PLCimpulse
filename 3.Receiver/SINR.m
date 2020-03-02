@@ -6,8 +6,8 @@ function [output] = SINR(ave)
     if ave<Psig
         output = MAX * exp(INF*(ave-Psig));
     else
-        %output = (MAX-conve) * exp((Psig-ave)*INF) + conve;
-        output = MAX * exp((Psig-ave)*INF);
+        output = (MAX-conve) * exp((Psig-ave)*INF) + conve;
+        %output = MAX * exp((Psig-ave)*INF);
     end
 end
 
