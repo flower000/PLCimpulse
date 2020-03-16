@@ -28,7 +28,7 @@ global ZeroFre HighFre winLabel;
 ZeroFre = 0;	HighFre = 0;	winLabel = false;
 % frame structure
 global l fraNum;
-l = 10;		fraNum = 2;	
+l = 10;		fraNum = 1;	
 
 %--------------------------------------------------------------------------
 % about channel
@@ -36,6 +36,8 @@ global  SNR SIR;
 SNR = 10;   SIR = 0; % dB
 global Pawgn Pim Psig PowerRatio;
 PowerRatio = 2;
+global lambda;
+lambda = 1;
 %--------------------------------------------------------------------------
 % about receiver
 global isSuppre isSegme;
@@ -45,12 +47,12 @@ suplabel = 1;   CorrLabel = 2;
 global segnum;
 segnum = 4;
 global T Tmin k delta stepA stepT itertime;
-T = 100;  Tmin = 1e-9;  
-k = 100;  delta = 0.99;
+T = 100;  Tmin = 1e-8;  
+k = 100;  delta = 0.97;
 stepA = 0.1;    stepT = 0.05;
-itertime = 3;
+itertime = 1;
 global coefficient;
-coefficient = 1/9;
+coefficient = 1/10;
 
 
 %--------------------------------------------------------------------------
@@ -58,18 +60,18 @@ coefficient = 1/9;
 %--------------------------------------------------------------------------
 % about test1
 global iteration;
-iteration = 5;
+iteration = 15;
 
 %% the Transmitter
 [Trans] = TransSig();
 %% Through channel
-recie = ThrouChan(Trans');
+%recie = ThrouChan(Trans');
 %% the Receiver
-[Topt,aopt,t1,t2,t3,t4] = estTime(recie);
+%[Topt,aopt,t1,t2,t3,t4] = estTime(recie);
 
 % the test
 %% the test_1: given SNR; different SIR from 0dB to 20dB with step of 5dB;
-%test1(Trans');
+test1(Trans');
 
 
 

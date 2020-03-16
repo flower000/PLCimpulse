@@ -90,7 +90,7 @@ function [corr1,toa1,corr2,toa2] = CorrCurv_B(temp1,temp2)
     % calculating and comparing
     MSE = sum(abs((temp-looup_table)).^2)/(4*N1/k1);
     [~,shift] = min(MSE);       % shift index in second 'short' symol
-    toa1 = start - (shift);
+    toa1 = start - (shift)+1;
 %----------------------------------------------------------------------------------------
 % Acquisition: corr2   
     global Fuc Fus beta Ndf Nhd Ngi Fsc N;
@@ -120,7 +120,7 @@ function [corr1,toa1,corr2,toa2] = CorrCurv_B(temp1,temp2)
     % calculating and comparing
     MSE = sum(abs((temp-looup_table)).^2)/(4*N1/k1);
     [~,shift] = min(MSE);       % shift index in second 'short' symol
-    toa2 = start - (shift);
+    toa2 = start - (shift) + 1;
 end
 %% the others
 function [corr1,corr2,corr3,corr4] = CorrCurv_C(temp1,temp2)

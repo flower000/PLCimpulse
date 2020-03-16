@@ -7,7 +7,7 @@ function [withImpul] = ThrouChan(input)
     withAWGN = awgn(input,SNR,'measured');
 %% impulse noise
     withImpul = withAWGN + ImpulGen(Num);
-    displayChal(input,withAWGN,withImpul);
+    %displayChal(input,withAWGN,withImpul);
 end
 
 function [output] = displayChal(input,withAWGN,withImpul)
@@ -22,6 +22,7 @@ function [output] = displayChal(input,withAWGN,withImpul)
     title('信道对信号的影响');
     hold off;
 end
+
 
 function [impulse] = ImpulGen(num)
 %ImpulGen: the generation the Impulse noise
@@ -42,4 +43,8 @@ function [impulse] = ImpulGen(num)
 %% normalization with SIR
     tempLen = length(matr1) + length(matr2);
     impulse = impulse * sqrt(Pim / mean(impulse.^2)*Num/tempLen);
+end
+
+function [impulse] = car(num)
+    a = 1;
 end
