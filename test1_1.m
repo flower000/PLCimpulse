@@ -1,9 +1,9 @@
-function [T,a,corr1,toa1,corr2,toa2] = test1(signal)
+function [T,a,corr1,toa1,corr2,toa2] = test1_1(signal)
 %estTime: to estimate the arrival time
 %   
     col = 0:5:20;
     row = 1:2;
-    global SIR iteration suplabel Pim Psig;
+    global SIR iteration suplabel Pim Psig Num;
     % T and a
     T_mean = zeros(iteration,length(col),length(row));     a_mean = T_mean;
     % evaluation of the Timing
@@ -11,13 +11,15 @@ function [T,a,corr1,toa1,corr2,toa2] = test1(signal)
     % run time
     run = zeros(iteration,length(col),length(row));   
     
+    noise0 = [];
     load 'D:\Lab\HUWEIplc\3.pulseNoise\code\HUAWEInoise\电瓶车\noise0.mat'
     
     for suplabel = row
         for SIR = col
             Pim = Psig*10^(-SIR/10);
             for index = 1:iteration
-                Temprecie = ThrouChan(signal);
+                impulse = ImpulGen(Num,noise0);
+                Temprecie = ThrouChan(signal,impulse);
                 [temp1,runtime,TempT,Tempa] = suppre(Temprecie);    temp2 = Temprecie;
                 [corr1,toa1,corr2,toa2] = CorrCurv(temp1,temp2);
                 % record
@@ -30,7 +32,7 @@ function [T,a,corr1,toa1,corr2,toa2] = test1(signal)
         end
     end
     %dispTa(T_mean,a_mean);
-    %dispTime(tim1,tim2);
+    dispTime(tim1,tim2);
     dispRuntime(run);
 end
 
@@ -67,27 +69,28 @@ function [] = dispTa(T_mean,a_mean)
 end
 
 function [] = dispTime(tim1,tim2)
+    global delay;
     tim2 = sum(tim2,3)/size(tim2,3);
-    
-    Tcurve1 = mean(tim1(:,:,1));    %  蛮力法
-    Tcurve2 = mean(tim1(:,:,2));    %  模拟退火
-    Tcurve3 = mean(tim2(:,:,1));    %  没有消除噪声
+    Tcurve1 = sqrt(mean((tim1(:,:,1)-delay).^2))*0.02;    %  蛮力法
+    Tcurve2 = sqrt(mean((tim1(:,:,2)-delay).^2))*0.02;    %  模拟退火
+    Tcurve3 = sqrt(mean((tim2(:,:,1)-delay).^2))*0.02;    %  没有消除噪声
     %acurve = sqrt(acurve);
     % plot
     figure; hold on;
     plot([0:5:20],Tcurve1,'-s','MarkerSize',10,'MarkerEdgeColor','blue','MarkerFaceColor',[0 .1 .95]);
     plot([0:5:20],Tcurve2,'-s','MarkerSize',10,'MarkerEdgeColor','red','MarkerFaceColor',[1 .6 .6]);
     plot([0:5:20],Tcurve3,'-s','MarkerSize',10,'MarkerEdgeColor','black','MarkerFaceColor',[0 .05 .05]);
-    plot([0:5:20],18494*ones(1,5),'--k');
+    %plot([0:5:20],18494*ones(1,5),'--k');
     legend('蛮力法','模拟退火','无消除噪声','正确定时结果');
-    title('10dB白噪声下定时同步曲线');
+    title('10dB白噪声-定时同步均方根误差曲线');
     set(gca,'XTick',[0:5:20]);
     xlabel('信干比(dB)');
-    ylabel('离散时间');
+    ylabel('时间(us)');
     hold off;
 end
 
 function [] = dispRuntime(runtime)
+    figure;
     graphData = zeros(size(runtime,2),size(runtime,3));
     for index = 1:size(runtime,3)
         graphData(:,index) = mean(runtime(:,:,index))';

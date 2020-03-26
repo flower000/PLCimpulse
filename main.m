@@ -32,12 +32,22 @@ l = 10;		fraNum = 1;
 
 %--------------------------------------------------------------------------
 % about channel
-global  SNR SIR;
-SNR = 10;   SIR = 0; % dB
+global  SNR SIR noiseLabel;
+noiseLabel = 1;
+SNR = 10;   SIR = 20; % dB
 global Pawgn Pim Psig PowerRatio;
-PowerRatio = 2;
+PowerRatio = 1;
 global lambda;
 lambda = 1;
+global A omega Jm;    % impulse noise
+A = 1.85;   omega = 0.02;   Jm = 7;
+global sigma2 hyb k;
+j = [0:Jm];
+k = 2.9;
+hyb = exp(-A)*power(A,j) ./ factorial(j);
+sigma2 = (j/A+omega)/(1+omega);
+global lambda implen;
+lambda = 40; implen = ceil(lambda/3);
 %--------------------------------------------------------------------------
 % about receiver
 global isSuppre isSegme;
@@ -46,10 +56,10 @@ global suplabel CorrLabel;
 suplabel = 1;   CorrLabel = 2;
 global segnum;
 segnum = 4;
-global T Tmin k delta stepA stepT itertime;
+global T Tmin delta stepA stepT itertime;
 T = 100;  Tmin = 1e-8;  
-k = 100;  delta = 0.97;
-stepA = 0.1;    stepT = 0.05;
+delta = 0.99;
+stepA = 0.01;    stepT = 0.002;
 itertime = 1;
 global coefficient;
 coefficient = 1/10;
@@ -61,19 +71,34 @@ coefficient = 1/10;
 % about test1
 global iteration;
 iteration = 15;
+global simple;      % three or two
+simple = 3;
+global delay;
+delay = 18494;
 
 %% the Transmitter
-[Trans] = TransSig();
+[Trans] = TransSig();    Trans = Trans';    RejSampling(10*Num);
 %% Through channel
-%recie = ThrouChan(Trans');
+impulse = ImpulGen(Num);
+recie = ThrouChan(Trans,impulse);
 %% the Receiver
-%[Topt,aopt,t1,t2,t3,t4] = estTime(recie);
+[Topt,aopt,t1,t2,t3,t4] = estTime(recie);
 
-% the test
+% the test for Timing performance
+%Trans = OFDMgene();
 %% the test_1: given SNR; different SIR from 0dB to 20dB with step of 5dB;
-test1(Trans');
+% 比较模拟退火和蛮力法消噪，还有无消噪三种情况：运行耗时以及定时结果
+%test1_1(Trans);
+%% the test_2: given SNR; different SIR from 0dB to 20dB with step of 5dB;
+% 比较模拟退火和蛮力法消噪，还有无消噪三种情况：相关曲线
+%test1_2(Trans);
+%% the test_3: given SNR; different SIR from 0dB to 20dB with step of 5dB;
+% 比较模拟退火和蛮力法消噪两种情况：三段式降噪和两段式的区别
+%test1_3(Trans);
 
+% the test for aT table
+%test2_1();
 
-
-
+% the test for evaluation
+test3_1();
 

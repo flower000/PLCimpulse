@@ -1,4 +1,9 @@
 function [output] = SINR(ave)
+    global Psig;
+    output = abs(Psig/(ave-Psig));
+end
+%{
+function [output] = SINR(ave)
     global Pim Pawgn Psig INF;
     conve = Psig/(Pim+Pawgn);
     MAX = Psig/Pawgn;
@@ -10,4 +15,4 @@ function [output] = SINR(ave)
         %output = MAX * exp((Psig-ave)*INF);
     end
 end
-
+%}
