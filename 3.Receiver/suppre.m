@@ -21,11 +21,11 @@ function [T,a] = bruteForce(signal)
     if simple == 2
         scaleA = 1;
     end
-    scaleT = 2:stepT:3.4;
+    scaleT = 0:stepT:3.4;
     res = ones(length(scaleA),length(scaleT));
     MAX = max(signal);
-    for T_index = 1:length(scaleT)
-        for a_index = 1:length(scaleA)
+    for a_index = 1:length(scaleA)
+        for T_index = 1:length(scaleT)
             temp = f(signal,scaleT(T_index),scaleA(a_index));     % Receiver doesn't know P 
             ave = mean(temp.^2);
             if scaleT(T_index) * scaleA(a_index) >= MAX
@@ -37,20 +37,29 @@ function [T,a] = bruteForce(signal)
     end
     % display
     
-   
-    figure;  hold on;
-    pcolor(scaleT,scaleA,res);
-    shading interp;
-    colorbar;   colormap(jet);
-    xlabel('T');ylabel('a');
+%    
+%     figure;  hold on;
+%     pcolor(scaleT,scaleA,res);
+%     shading interp;
+%     colorbar;   colormap(jet);
+%     xlabel('T');ylabel('a');
     
     
-    % T
-    [~,resT] = max(max(res));
-    T = scaleT(resT);
-    % a
-    [~,resA] = max(res(:,resT));
-    a = scaleA(resA);
+    
+    if simple == 3
+        % T
+        [~,resT] = max(max(res));
+        T = scaleT(resT);
+        % a
+        [~,resA] = max(res(:,resT));
+        a = scaleA(resA);
+    elseif simple==2
+        % T
+        [~,resT] = max(res);
+        T = scaleT(resT);
+        % a
+        a = 1;
+    end
 end
 
 %% Ä£ÄâÍË»ð

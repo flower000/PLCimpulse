@@ -47,7 +47,8 @@ k = 2.9;
 hyb = exp(-A)*power(A,j) ./ factorial(j);
 sigma2 = (j/A+omega)/(1+omega);
 global lambda implen;
-lambda = 40; implen = ceil(lambda/3);
+lambda = 800; implen = 50;%ceil(lambda/3);
+global scale;
 %--------------------------------------------------------------------------
 % about receiver
 global isSuppre isSegme;
@@ -77,12 +78,12 @@ global delay;
 delay = 18494;
 
 %% the Transmitter
-[Trans] = TransSig();    Trans = Trans';    RejSampling(10*Num);
-%% Through channel
-impulse = ImpulGen(Num);
-recie = ThrouChan(Trans,impulse);
-%% the Receiver
-[Topt,aopt,t1,t2,t3,t4] = estTime(recie);
+% [Trans] = TransSig();    Trans = Trans';    RejSampling(10*Num);
+% %% Through channel
+% impulse = ImpulGen(Num);
+% recie = ThrouChan(Trans,impulse);
+% %% the Receiver
+% [Topt,aopt,t1,t2,t3,t4] = estTime(recie);
 
 % the test for Timing performance
 %Trans = OFDMgene();
