@@ -4,8 +4,10 @@ function [output] = ImpulGen(num,ori)
         output = manual(num);
     elseif noiseLabel==2    % 华为数据
         output = car(num,ori);
-    elseif noiseLabel==3
+    elseif noiseLabel==3    % 拒绝采样，混合高斯
         output = RejSampling(3*num);
+    elseif noiseLabel==4    % 双边高斯，滤波器
+        output = BYht(num);
     end
 end
 
@@ -71,17 +73,22 @@ function [output] = RejSampling(argu)
         temp = sample(orde(1:implen));
         output(1,now:now+implen-1) = output(1,now:now+implen-1) + temp;
     end
-    global Pim scale;
+    global Pim scale SIR;
     %Pim*Num = 2*implen*scale^2;
+%     if SIR == 0
+%         pow = 20;
+%     end
     scale = sqrt(Pim*Num / 2/implen);
     %scale = sqrt(Pim / mean(output.^2));
     output = output * scale;
     output = awgn(output,30,'measured');
-    plot(output);
-    %set(gca,'XLim',[0,4.5e4]);
-    title('脉冲噪声');
-    xlabel('离散时间');
-    ylabel('幅度');
+    
+%     figure;
+%     plot(output);
+%     %set(gca,'XLim',[0,4.5e4]);
+%     title('脉冲噪声');
+%     xlabel('离散时间');
+%     ylabel('幅度');
 end
 
 function [] = display_k(z,s,PZ)
@@ -124,3 +131,44 @@ function [] = displayVerify(z,PZ,output)
     hold off;
 end
 
+%% impulse noise by filter h(t)
+function [output] = BYht(argu)
+    global sigma mu;
+    global Num Ts;
+    global implen;
+    %loc = exprnd(lambda,1,ceil(Num/lambda));
+    start = randi(50)+150;
+    loc = [start,230,770,230];
+    output = zeros(1,Num);
+    now = 1;
+    tau = implen*Ts/20;
+    omega = 20*pi/tau;
+    t = [0:Ts:(implen-1)*Ts];
+    unit_ht = exp(-t/tau).*cos(omega*t);    unitPower = sum(unit_ht.^2);
+    for index = 1:length(loc)
+        now = now + loc(index);
+        if now + implen> Num
+            break;
+        end
+        if randi(2)==1
+            amplitude = normrnd(mu,sigma,1,1);
+        else
+            amplitude = normrnd(-mu,sigma,1,1);
+        end
+        temp = amplitude * unit_ht;
+        output(1,now:now+implen-1) = output(1,now:now+implen-1) + temp;
+    end
+
+    global Pim scale EX2;
+    scale = 0.5*sqrt(Pim*Num / unitPower/EX2);
+    %scale = sqrt(Pim / mean(output.^2));
+    output = output * scale;
+    output = awgn(output,30,'measured');
+    
+%     figure;
+%     plot(output);
+%     %set(gca,'XLim',[0,4.5e4]);
+%     title('脉冲噪声');
+%     xlabel('离散时间');
+%     ylabel('幅度');
+end

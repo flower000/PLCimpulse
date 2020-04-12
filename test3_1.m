@@ -7,7 +7,7 @@ function [] = test3_1()
 	Psig = mean(ofdm.^2);
     %% channel
     global SIR SNR;
-    SNR = 30;   SIR = 20;
+    SNR = 30;   SIR = 0;
     Pim = Psig*10^(-SIR/10);   Pawgn = Psig*10^(-SNR/10);
     global noiseLabel;
     noiseLabel = 3;
@@ -25,7 +25,7 @@ function [] = test3_1()
     % 假设信号的分布为高斯分布
     global sigma2 hyb;
     deltaT = 0.05;
-    T = [0:deltaT:15*ceil(thres/deltaT)*deltaT];
+    T = [0:deltaT:25*ceil(thres/deltaT)*deltaT];
     ps = 1/(sqrt(2*pi)*sqrt(sig2))*exp(-0.5*T.^2/sqrt(sig2)^2);
     y2ps = T.^2.*ps;                                        %figure;plot(T,y2ps);title('y2ps');
     Fs = zeros(1,length(T));      % 反向 累计分布函数
@@ -46,8 +46,8 @@ function [] = test3_1()
     end
     %figure; plot(T,Fy);title('Fy');
     % 总
-    %n = 2*implen;
-    su = 2*Num*Fs + 2*3.5*n*Fy - noisepower;    %figure; plot(T,su);title('总');
+    n = implen*2;
+    su = 2*Num*Fs + 2*n*Fy - noisepower;    %figure; plot(T,su);title('总');
     [~,ind] = min(abs(su));
     Teva = T(ind)   % 0,5,10,15,20dB: 系数×2,1,4/5,2/3, 曲线拟合一下系数
     %% best
