@@ -48,12 +48,14 @@ global lambda implen;
 lambda = 800; implen = 240;%ceil(lambda/3);
 global scale;
 global sigma mu EX2;
-sigma = 0.5;    mu = 3;
+sigma = 0.01;    mu = 1;
 deltaT = 0.01;
-t = [0:deltaT:10];
+t = [0:deltaT:40];
 f = 0.5 * 1/(sqrt(2*pi)*sigma)*exp(-0.5*(t-mu).^2/sigma^2);
 t2f = t.^2.*f;
 EX2 = 2 * sum(t2f) * deltaT;
+global obserWIN;
+obserWIN = implen;
 %--------------------------------------------------------------------------
 % about receiver
 global isSuppre isSegme;
@@ -115,4 +117,6 @@ delay = 18494;
 %test3_4();     % 单次，修改SINR定义以后，收端的估计算法（偏导）
 
 % 进一步修改模型为双边高斯分布，修改SINR
-test3_5();
+%test3_5();
+%test3_6();      % 加窗 多元回归， 通过观测s[n] 对scale进行估计
+test3_7();      % 加窗 不同的scale(SIR)，改变T计算SINR，用scale拟合T

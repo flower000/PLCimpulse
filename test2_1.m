@@ -17,7 +17,7 @@ function [] = test2_1()
     global suplabel simple;
     suplabel = 1;       % 最优的
     simple = 3;     % 三段式
-    c = cell(5*iteration,7);
+    c = cell(5*iteration,6);
     for SIR = 0:5:20
         Pim = Psig*10^(-SIR/10);
         fprintf('信干比为：%d\n',SIR);

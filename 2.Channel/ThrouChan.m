@@ -6,7 +6,7 @@ function [withImpul] = ThrouChan(input,impulse)
 % AWGN
     withAWGN = awgn(input,SNR,'measured');
 % impulse noise
-    withImpul = withAWGN + impulse;
+    withImpul = withAWGN + [impulse,zeros(1,length(withAWGN)-length(impulse))];
     %withImpul = withAWGN + RejSampling(2*Num);
 % display
     %displayChal(input,withAWGN,withImpul);
