@@ -8,10 +8,11 @@ function [] = test3_7()
     Pim = Psig*10^(-SIR/10);   Pawgn = Psig*10^(-SNR/10);
     %% receiver
     global obserWIN Ts;
+    obserWIN = 200;
     range = 0:1:14;
     
     global mu sigma implen EX2;
-    tau = implen*Ts/4;
+    tau = implen*Ts/2;
     omega = 20*pi/tau;
     start = 6;
     t = [0:Ts:(implen-1)*Ts];
@@ -19,6 +20,8 @@ function [] = test3_7()
     unit_ht(1,1:start) = [1,-1,0.75,0.6,-0.7,0.5];
     temp = exp(-2*t/tau).*cos(omega*t);
     unit_ht(1,(start+1):end) =  0.3*temp(1:end-start);   unitPower = sum(unit_ht.^2);
+    
+    unit_ht = unit_ht(1:obserWIN);
     %plot(t,unit_ht);
     
     % ¼ÇÂ¼
@@ -124,5 +127,5 @@ function [xt] = Display(T,static)
 end
 
 function [] = approxim(x,y)
-    
+    a = 1;
 end

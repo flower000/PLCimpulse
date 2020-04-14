@@ -20,14 +20,14 @@ function [] = test3_6()
     global iteration obserWIN Ts;
     ofdm = ofdm(1:obserWIN);    Num = obserWIN;
     iteration = 30;
-    range = 0:1:20;
+    range = 0:1:14;
     global suplabel simple;
     suplabel = 1;       % 最优的
     simple = 3;     % 三段式
-    c = cell(length(range)*iteration,6);
+    aTbase = cell(length(range)*iteration,8);
     
     global mu sigma implen EX2;
-    tau = implen*Ts/4;
+    tau = implen*Ts/2;
     omega = 20*pi/tau;
     start = 6;
     t = [0:Ts:(implen-1)*Ts];
@@ -40,6 +40,7 @@ function [] = test3_6()
     % 记录
     count = 1;
     static = zeros(iteration,length(range),2);
+    obserWIN = 200;
     for SIR = range
         Pim = Psig*10^(-SIR/10);
         fprintf('信干比为：%d\n',SIR);
@@ -62,7 +63,7 @@ function [] = test3_6()
             scale = 0.5 * sqrt(Pim*2048 / unitPower/EX2);
             impulse = temp * scale;
             impulse = awgn(impulse,30,'measured');
-            recie = ThrouChan(ofdm,impulse);
+            recie = ThrouChan(ofdm,impulse(1,1:obserWIN));
             
             % 检测
 %             for t = 1:length(recie)
@@ -80,31 +81,41 @@ function [] = test3_6()
 %                 Tcom = 3*1;
 %                 acom = 1;
 %             end
-            plot(ofdm); hold on; plot(impulse);hold off;
+            %plot(ofdm); hold on; plot(impulse);hold off;
             [~,~,Tcom,acom] = suppre(ofdm,recie);
             static(index,count,1) = Tcom;    % 最优的
             % 统计量1——s[n]平均值
             static(index,count,2) = sta1(recie);
             
             % 计算接收信号的一些特征量
-            c{(count-1)*iteration+index,1} = recie;           % 信号
-            c{(count-1)*iteration+index,2} = mean(abs(recie));     % 信号绝对值 平均值
-            c{(count-1)*iteration+index,3} = var(recie);      % 信号方差
-            c{(count-1)*iteration+index,4} = max(abs(recie)); % 最大值
-            c{(count-1)*iteration+index,5} = sum(recie.^2);  % 总功率
-            
-            c{(count-1)*iteration+index,6} = scale;           % scale
+            aTbase{(count-1)*iteration+index,1} = recie;           % 信号
+            aTbase{(count-1)*iteration+index,2} = mean(abs(recie));% 信号绝对值 平均值
+            aTbase{(count-1)*iteration+index,3} = var(recie);      % 信号方差
+            aTbase{(count-1)*iteration+index,4} = max(abs(recie)); % 最大值
+            aTbase{(count-1)*iteration+index,5} = sum(recie.^2);   % 总功率
+            aTbase{(count-1)*iteration+index,6} = scale;           % scale
+            aTbase{(count-1)*iteration+index,7} = acom;            % acom
+            aTbase{(count-1)*iteration+index,8} = Tcom;            % Tcom
 %             % 打印
              fprintf('----轮数：%d,T=%d,a=%d\n',index,Tcom,acom);
         end
         count = count + 1;
     end
-    save c.mat c;
+    save aTbase.mat aTbase;
     
     %% 多元回归
     anly();
+    %% 估计
+    data = aTbase(:,obserWIN+1:end);
+    x1 = data(:,1);
+    x2 = data(:,2);
+    x3 = data(:,3);
+    x4 = data(:,4);
+    numSCALE = 13.3395-5.53064*x1-13.1858*exp(x2/4)+0.204*x3+0.0464*x4;
+    numPim = unitPower * EX2 * (2*numSCALE).^2/2048;
+    numSIR = 10*log(1./numPim)/log(10);
     %% 绘图
-    display(static);
+    %display(static);
 end
 
 function [output] = sta1(signal)
@@ -148,10 +159,10 @@ function [] = display(static)
 end
 
 function [] = anly()
-    global obserWIN iteration;
+    global obserWIN;
     %信号绝对值 平均值 + 信号方差 + 最大值 + T
-    load c.mat c;
-    data = cell2mat(c);     
+    load aTbase.mat aTbase;
+    data = cell2mat(aTbase);     
     data = data(:,obserWIN+1:end);   %
     y = data(:,5);        % scale
     x1 = data(:,1);       % 信号绝对值 平均值
