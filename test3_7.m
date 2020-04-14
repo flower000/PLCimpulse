@@ -8,18 +8,19 @@ function [] = test3_7()
     Pim = Psig*10^(-SIR/10);   Pawgn = Psig*10^(-SNR/10);
     %% receiver
     global obserWIN Ts;
-    obserWIN = 200;
     range = 0:1:14;
     
     global mu sigma implen EX2;
-    tau = implen*Ts/2;
-    omega = 20*pi/tau;
-    start = 6;
+    obserWIN = implen;
+    tau = implen*Ts/1.4;
+    omega = 40*pi/tau;
+    start = 3;
     t = [0:Ts:(implen-1)*Ts];
     unit_ht = zeros(1,implen);
-    unit_ht(1,1:start) = [1,-1,0.75,0.6,-0.7,0.5];
+    unit_ht(1,1:start) = [1,-1,0.45];
     temp = exp(-2*t/tau).*cos(omega*t);
-    unit_ht(1,(start+1):end) =  0.3*temp(1:end-start);   unitPower = sum(unit_ht.^2);
+    %temp = exp(-2*t/tau).*power(-1,floor(t/Ts));
+    unit_ht(1,(start+1):end) =  0.6*temp(1:end-start);   unitPower = sum(unit_ht.^2);
     
     unit_ht = unit_ht(1:obserWIN);
     %plot(t,unit_ht);
@@ -50,7 +51,7 @@ function [] = test3_7()
             weight = zeros(size(pr));
             count = 1;
             for t = xrange
-                temp = unit_ht(unit_ht * t <= T(index)) * t;
+                temp = unit_ht(abs(unit_ht * t) <= T(index)) * t;
                 weight(count) = sum(temp.^2);
                 count = count + 1;
             end
@@ -71,32 +72,33 @@ end
 function [xt] = Display(T,static)
     % ¾ùÔÈ×Ý×ø±êSINRµÄÍ¼Ïñ
     figure;
+    static = static(:,6:end);
     hold on;
     xt = zeros(1,size(static,1)); yt = xt;
     for index = 1:size(static,1)
-        [~,loc] = max(static(index,:));
-        value = static(index,loc);
-        xt(index) = T(loc);
-        yt(index) = value;
-        plot(T,static(index,:));
+    [~,loc] = max(static(index,:));
+    value = static(index,loc);
+    xt(index) = T(loc);
+    yt(index) = value/max(static(index,:))*index;
+    plot(T(6:end),static(index,:)/max(static(index,:))*index);
     end
     %str = '¾Ö²¿¼«Öµµã';
     %text(xt,yt,str);
     plot(xt,yt,'*');
     xlabel('T');    ylabel('SINR');
     title('²»Í¬ÐÅ¸É±ÈÂö³åÔëÉùµÄ×îÓÅ½µÔë²ÎÊýT');
-%     legend('SIR=0dB','SIR=1dB','SIR=2dB','SIR=3dB','SIR=4dB' ...
-%         ,'SIR=5dB','SIR=6dB','SIR=7dB','SIR=8dB','SIR=9dB' ...
-%         ,'SIR=10dB','SIR=11dB','SIR=12dB','SIR=13dB','SIR=14dB'...
-%         ,'Location','northeast','NumColumns',1);
-%     legend('SIR=14dB','SIR=13dB','SIR=12dB','SIR=11dB','SIR=10dB' ...
-%         ,'SIR=9dB','SIR=8dB','SIR=7dB','SIR=6dB','SIR=5dB' ...
-%         ,'SIR=4dB','SIR=3dB','SIR=2dB','SIR=1dB','SIR=0dB'...
-%         ,'Location','northeast','NumColumns',1);
+    %     legend('SIR=0dB','SIR=1dB','SIR=2dB','SIR=3dB','SIR=4dB' ...
+    %         ,'SIR=5dB','SIR=6dB','SIR=7dB','SIR=8dB','SIR=9dB' ...
+    %         ,'SIR=10dB','SIR=11dB','SIR=12dB','SIR=13dB','SIR=14dB'...
+    %         ,'Location','northeast','NumColumns',1);
+    %     legend('SIR=14dB','SIR=13dB','SIR=12dB','SIR=11dB','SIR=10dB' ...
+    %         ,'SIR=9dB','SIR=8dB','SIR=7dB','SIR=6dB','SIR=5dB' ...
+    %         ,'SIR=4dB','SIR=3dB','SIR=2dB','SIR=1dB','SIR=0dB'...
+    %         ,'Location','northeast','NumColumns',1);
     legend('14dBÂö³å','13dBÂö³å','12dBÂö³å','11dBÂö³å','10dBÂö³å' ...
-        ,'  9dBÂö³å','  8dBÂö³å','  7dBÂö³å','  6dBÂö³å','  5dBÂö³å' ...
-        ,'  4dBÂö³å','  3dBÂö³å','  2dBÂö³å','  1dBÂö³å','  0dBÂö³å'...
-        ,'Location','northeast','NumColumns',1);
+    ,'  9dBÂö³å','  8dBÂö³å','  7dBÂö³å','  6dBÂö³å','  5dBÂö³å' ...
+    ,'  4dBÂö³å','  3dBÂö³å','  2dBÂö³å','  1dBÂö³å','  0dBÂö³å'...
+    ,'Location','northeast','NumColumns',1);
     set(gca,'XLim',[0,12]);
     hold off;
     
