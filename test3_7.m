@@ -11,13 +11,14 @@ function [] = test3_7()
     range = 0:1:14;
     
     global mu sigma implen EX2;
-    obserWIN = implen;
+    obserWIN = 2*implen;
     tau = implen*Ts/1.4;
     omega = 40*pi/tau;
-    start = 3;
-    t = [0:Ts:(implen-1)*Ts];
-    unit_ht = zeros(1,implen);
-    unit_ht(1,1:start) = [1,-1,0.45];
+    start = 8;
+    t = [0:Ts:(obserWIN-1)*Ts];
+    unit_ht = zeros(1,obserWIN);
+    %unit_ht(1,1:start) = [1,-1,0.45];
+    unit_ht(1,1:start) = [1,-1,1,-0.7,0.75,-0.8,1,-0.7];
     temp = exp(-2*t/tau).*cos(omega*t);
     %temp = exp(-2*t/tau).*power(-1,floor(t/Ts));
     unit_ht(1,(start+1):end) =  0.6*temp(1:end-start);   unitPower = sum(unit_ht.^2);
@@ -72,7 +73,7 @@ end
 function [xt] = Display(T,static)
     % 均匀纵坐标SINR的图像
     figure;
-    static = static(:,6:end);
+    static = static(:,3:end);
     hold on;
     xt = zeros(1,size(static,1)); yt = xt;
     for index = 1:size(static,1)
@@ -80,7 +81,7 @@ function [xt] = Display(T,static)
     value = static(index,loc);
     xt(index) = T(loc);
     yt(index) = value/max(static(index,:))*index;
-    plot(T(6:end),static(index,:)/max(static(index,:))*index);
+    plot(T(3:end),static(index,:)/max(static(index,:))*index);
     end
     %str = '局部极值点';
     %text(xt,yt,str);
@@ -112,7 +113,7 @@ function [xt] = Display(T,static)
         value = static(index,loc);
         xt(index) = T(loc);
         yt(index) = value;
-        plot(T,static(index,:));
+        plot(T(3:end),static(index,:));
     end
     %str = '局部极值点';
     %text(xt,yt,str);

@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------------
+RCM = 0, Rep no = 1, kp= 34392.00,Average bit per tone = 12.00, Linerate = 671.72Mbps, Bitrate = 639.73, CodeRate = 0.95
+*include GI overhead
+Time evaluated = 0 Min 4 Sec

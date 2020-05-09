@@ -17,11 +17,11 @@ end
 function [T,a] = bruteForce(realsig,signal)
 %generationAT: obtain the optimal parameters T and a for impulse noise suppression
     global stepA stepT simple;
-    scaleA = 1:stepA:6;
+    scaleA = 1:0.2:3.5;
     if simple == 2
         scaleA = 1;
     end
-    scaleT = 0:stepT:6;
+    scaleT = 0:0.05:5;
     res = ones(length(scaleA),length(scaleT));
     MAX = max(abs(signal));
     for a_index = 1:length(scaleA)

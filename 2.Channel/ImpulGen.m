@@ -30,13 +30,15 @@ function [impulse] = manual(num)
     impulse(matr2) = impulse(matr2) + rand(length(matr2),1)-0.5;
 %% normalization with SIR
     impulse = impulse * sqrt(Pim / sum(impulse.^2)*num);
+    impulse = impulse';
 end
 
 %% impulse noise by Huawei
 function [impulse] = car(num,ori)
     global Pim;
     start = randi(1000);    %1000;%
-    impulse = ori(start:4:start+4*(num-1));
+    temp = 1;
+    impulse = ori(start:temp:start+temp*(num-1));
     impulse = impulse * sqrt(Pim / mean(impulse.^2));
 end
 
@@ -137,31 +139,36 @@ function [output] = BYht(argu)
     global Num Ts;
     global implen;
     %loc = exprnd(lambda,1,ceil(Num/lambda));
-    start = randi(50)+150;
-    loc = [start,230,770,230];
+%     start = randi(50)+150;
+%     loc = [start,230,770,230];
+    loc = repmat([230*4,770*4],1,ceil(argu/4000));
+    Num = argu;
     output = zeros(1,Num);
     now = 1;
-    tau = implen*Ts/20;
-    omega = 20*pi/tau;
+    Ts = Ts / 4;
+    tau = 0.6*implen*Ts;
+    omega = 120*pi/tau;
     t = [0:Ts:(implen-1)*Ts];
-    unit_ht = exp(-t/tau).*cos(omega*t);    unitPower = sum(unit_ht.^2);
+    start = 4;
+    unit_ht = zeros(1,implen);
+    unit_ht(1,1:start) = [1,-1,0.65,-0.5];
+    temp = exp(-2*t/tau).*cos(omega*t);
+    unit_ht(1,(start+1):end) = 0.7*temp(1:end-start);
+    unitPower = sum(unit_ht.^2);
     for index = 1:length(loc)
         now = now + loc(index);
         if now + implen> Num
             break;
         end
-        if randi(2)==1
-            amplitude = normrnd(mu,sigma,1,1);
-        else
-            amplitude = normrnd(-mu,sigma,1,1);
-        end
+        amplitude = normrnd(mu,sigma,1,1);
         temp = amplitude * unit_ht;
         output(1,now:now+implen-1) = output(1,now:now+implen-1) + temp;
     end
 
     global Pim scale EX2;
-    scale = 0.5*sqrt(Pim*Num / unitPower/EX2);
-    %scale = sqrt(Pim / mean(output.^2));
+%     scale = 0.5*sqrt(Pim*Num / unitPower/EX2);
+
+    scale = sqrt(Pim / mean(output.^2));
     output = output * scale;
     output = awgn(output,30,'measured');
     

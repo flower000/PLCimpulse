@@ -5,7 +5,8 @@ function [output] = SINR(realsig,noise,T,a)
     noise(abs(noise)>=a*T) = 0;
     PowReal = mean(realsig.^2);
     PowNoise = mean(noise.^2);
-    output = PowReal/PowNoise;
+    %output = PowReal/PowNoise;
+    output = 10*log(PowReal/PowNoise)/log(10);
 end
 %{
 function [output] = SINR(ave)

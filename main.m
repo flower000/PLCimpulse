@@ -28,7 +28,7 @@ global ZeroFre HighFre winLabel;
 ZeroFre = 0;	HighFre = 0;	winLabel = false;
 % frame structure
 global l fraNum;
-l = 10;		fraNum = 1;	
+l = 3;		fraNum = 1;	
 
 %--------------------------------------------------------------------------
 % about channel
@@ -45,10 +45,10 @@ PowerRatio = 1;
 % hyb = exp(-A)*power(A,j) ./ factorial(j);
 % sigma2 = (j/A+omega)/(1+omega);
 global lambda implen;
-lambda = 800; implen = 120;%ceil(lambda/3);
+lambda = 800; implen = 1;%300;%ceil(lambda/3);
 global scale;
 global sigma mu EX2;
-sigma = 0.001;    mu = 1;
+sigma = 0.0001;    mu = 1;
 %sigma = 1;    mu = 0;
 % deltaT = 0.01;
 % t = [-10:deltaT:40];
@@ -68,10 +68,10 @@ segnum = 4;
 global T Tmin delta stepA stepT itertime;
 T = 100;  Tmin = 1e-8;  
 delta = 0.99;
-stepA = 0.01;    stepT = 0.01;
+stepA = 0.2;    stepT = 0.2;
 itertime = 1;
 global coefficient;
-coefficient = 1/10;
+coefficient = 1/4;
 
 
 %--------------------------------------------------------------------------
@@ -120,4 +120,13 @@ delay = 18494;
 % 进一步修改模型为双边高斯分布，修改SINR
 % %test3_5();     % 加窗情况下，aT库的数据
 %test3_6();     % 加窗 多元回归， 通过观测s[n] 对scale进行估计
-test3_7();      % 加窗 不同的scale(SIR)，改变T计算SINR，用scale拟合T
+%test3_7();      % 加窗 不同的scale(SIR)，改变T计算SINR，用scale拟合T
+
+% 测试小程序
+%test4_1();
+
+% 同步
+test5_1();  % ITU帧结构（2dB增益）
+%test5_2();  % 非ITU结构（3.5dB增益）
+
+
